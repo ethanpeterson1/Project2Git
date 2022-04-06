@@ -29,6 +29,7 @@ pthread_mutex_t queueLocker;
 char* filename;
 FILE* fileOut; 
 int main (int argc, char** argv){
+	test
 	queueOfOperations = malloc(20 * sizeof(LinkedList));
 	init_app(argv, argc);
 	init_queue();
