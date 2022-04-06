@@ -5,7 +5,7 @@ typedef struct account{ // used to hold the mutex of each account and balance
 typedef struct trans{
 	int acc_id;
 	int amount;
-}trans
+}trans;
 
 typedef struct operation{
 	struct operation* nextop;

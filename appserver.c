@@ -9,7 +9,6 @@
 #include "appserver.h"
 #include <sys/time.h>
 
-
 char** get_args(char* line);
 char* read_line();
 void init_app(char** argv, int argc);
@@ -122,8 +121,19 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			queueOfOperations->head = tempop;
 			queueOfOperations->num_op++;
 		}
-		else{ //add to end of queue
-
+		else{
+			operation* tempop;
+			tempop = malloc(sizeof(operation));
+			tempop->ID = op_id;
+			op_id++;
+			struct timeval time;
+			gettimeofdat(&time,NULL);
+			tempop->starttime = time;
+			tempop-> check_op = 1;
+			tempop -> trans_op = 0;
+			queueOfOperations->end->nextop = tempop;
+			queueOfOperations->end = tempop;
+			queueOfOperatiojns->num_op++;
 		}
 		pthread_mutex_unlock(&queueLocker);
 	}
