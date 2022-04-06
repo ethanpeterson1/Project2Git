@@ -2,10 +2,11 @@ typedef struct account{ // used to hold the mutex of each account and balance
 	pthread_mutex_t mutex;
 	int balance;
 } account; 
+
 typedef struct trans{
 	int acc_id;
 	int amount;
-}trans
+}trans;
 
 typedef struct operation{
 	struct operation* nextop;
