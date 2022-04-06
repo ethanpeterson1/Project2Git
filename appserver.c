@@ -28,6 +28,7 @@ int op_id = 1;
 pthread_mutex_t queueLocker;
 char* filename;
 FILE* fileOut; 
+int num_transactions;
 int main (int argc, char** argv){
 	queueOfOperations = malloc(20 * sizeof(LinkedList));
 	init_app(argv, argc);
@@ -103,7 +104,7 @@ void* workerThread(){
 				gettimeofday(&time,NULL);
 				currop-> endtime = time;
 				flockfile(fileOut);
-				fprintf(fileOut,"%d BAL %d TIME %ld.%06.ld %ld.%06.ld ", currop->ID, value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec );
+				fprintf(fileOut,"%d BAL %d TIME %ld.%06.ld %ld.%06.ld\n", currop->ID, value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec );
 				funlockfile(fileOut);
 				//pthread_mutex_unlock(&queueLocker);
 			}
@@ -112,15 +113,17 @@ void* workerThread(){
 				int isFundsPoss = 1;
 				queueOfOperations-> head = currop -> nextop;
 				queueOfOperations->num_op--;
-				int ISFaccount;
-				for(int i =0;i < num_trans; i++){
-					currID= transactions[i] -> acc_id;
-					currAmount = transactions[i]->amount;
+				int ISFaccount,currID,currAmount,accBalance;
+				int i;
+				for(i =0;i < num_transactions; i++){
+					currID= currop->transactions[i].acc_id;
+					currAmount = currop->transactions[i].amount;
 					accBalance = read_account(currID); 
 					if(currAmount > accBalance){
+						printf("TRANS worked");
 						write_account(currID, accBalance+currAmount);
 					}
-					else(){
+					else{
 						isFundsPoss = 0;
 						ISFaccount = currID;
 						break;
@@ -131,7 +134,7 @@ void* workerThread(){
 					gettimeofday(&time,NULL);
 					currop-> endtime = time;
 					flockfile(fileOut);
-					fprintf(fileOut,"%d OK TIME %ld.%06.ld %ld.%06.ld",currop->ID, value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec);
+					fprintf(fileOut,"%d OK TIME %ld.%06.ld %ld.%06.ld\n",currop->ID,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec);
 					funlockfile(fileOut);
 				}
 				else{
@@ -139,7 +142,7 @@ void* workerThread(){
 					gettimeofday(&time,NULL);
 					currop-> endtime = time;
 					flockfile(fileOut);
-					fprintf(fileOut,"%d ISF %d TIME %ld.%06.ld %ld.%06.ld",currop->ID,ISFaccount,value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec);
+					fprintf(fileOut,"%d ISF %d TIME %ld.%06.ld %ld.%06.ld\n",currop->ID,ISFaccount,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec);
 					funlockfile(fileOut);
 				}
 			}
@@ -187,7 +190,7 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 		printf("num tokens %d\n", num_tokens);
 		printf("TRANS Operation detected\n");
 		//pthread_mutex_lock(&queueLocker);
-		int num_transactions = (num_tokens -1)/2;
+		num_transactions = (num_tokens -1)/2;
 		if(queueOfOperations->num_op == 0){
 			printf("< ID %d\n", op_id);
 			operation* tempop;
