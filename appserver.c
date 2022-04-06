@@ -87,7 +87,7 @@ void* init_queue(){
 }
 void* workerThread(){
 	while(status){
-		if(queueOfOperations->num_op != 0){
+		if(queueOfOperations->head != NULL){
 			operation* currop; 
 			currop = malloc(sizeof(operation));
 			currop = queueOfOperations->head;
@@ -95,7 +95,7 @@ void* workerThread(){
 				//flockfile(fileOut);
 				//fprintf(fileOut, "CHECK test");
 				//funlockfile(fileOut);
-				printf("Check Value of account = %d", read_account(currop->ID));
+				printf("Check Value of account = %d\n", read_account(currop->ID));
 				//pthread_mutex_lock(&queueLocker);
 				struct timeval time;
 				gettimeofday(&time,NULL);
@@ -113,6 +113,7 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 		printf("CHECK Operation detected\n");
 		//pthread_mutex_lock(&queueLocker);
 		if(queueOfOperations->num_op == 0){
+			printf("< ID %d\n", op_id);
 			operation* tempop;
 			tempop = malloc(sizeof(operation));
 			tempop->ID = op_id;
@@ -123,9 +124,11 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			tempop-> check_op = 1;
 			tempop -> num_trans = 0;
 			queueOfOperations->head = tempop;
+			queueOfOperations->end = tempop;
 			queueOfOperations->num_op++;
 		}
 		else{
+			printf("< ID %d\n", op_id);
 			operation* tempop;
 			tempop = malloc(sizeof(operation));
 			tempop->ID = op_id;
