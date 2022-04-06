@@ -13,7 +13,7 @@ typedef struct operation{
 	int check_op;
 	struct trans* transcations;
 	int num_trans;
-	struct timeval starttime;
+	struct timeval starttime, endtime;
 }operation;
 
 typedef struct LinkedList{
