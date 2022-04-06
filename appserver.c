@@ -113,13 +113,17 @@ void* workerThread(){
 				int isFundsPoss = 1;
 				queueOfOperations-> head = currop -> nextop;
 				queueOfOperations->num_op--;
-				int ISFaccount,currID,currAmount,accBalance;
+				int ISFaccount,currID,currAmount;
 				int i;
+				printf("NUM TRANSACTIONS:%d\n",num_transactions);
 				for(i =0;i < num_transactions; i++){
+					printf("in for:%d\n",i);
 					currID= currop->transactions[i].acc_id;
 					currAmount = currop->transactions[i].amount;
-					accBalance = read_account(currID); 
-					if(currAmount > accBalance){
+					int accBalance = read_account(currID); 
+					printf("currAmount : %d\n",currAmount);
+					printf("accBalance: %d\n", accBalance);
+					if(currAmount + accBalance > 0){
 						printf("TRANS worked");
 						write_account(currID, accBalance+currAmount);
 					}
@@ -218,6 +222,7 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			queueOfOperations->head = tempop;
 			queueOfOperations->end = tempop;
 			queueOfOperations->num_op++;
+			printf("ID CHECK:%d\n", tempop->transactions[0].acc_id);
 		}
 		else{
 			printf("< ID %d\n", op_id);
