@@ -12,7 +12,7 @@ typedef struct operation{
 	struct operation* nextop;
 	int ID;
 	int check_op;
-	struct trans* transcations;
+	struct trans* transactions;
 	int num_trans;
 	struct timeval starttime, endtime;
 }operation;

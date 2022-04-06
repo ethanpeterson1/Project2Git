@@ -107,11 +107,6 @@ void* workerThread(){
 				funlockfile(fileOut);
 				//pthread_mutex_unlock(&queueLocker);
 			}
-			else if(currop -> num_trans){
-				queueOfOperations-> head = currop -> nextop;
-				queueOfOperations->num_op--;
-				for(int i =1;)
-			}
 		}
 	}
 }
@@ -153,15 +148,29 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 		//pthread_mutex_unlock(&queueLocker);
 	}
 	if((strcmp(args[0],"TRANS") == 0) && (num_tokens-1 % 2) && num_tokens > 1){
+		printf("num tokens %d\n", num_tokens);
 		printf("TRANS Operation detected\n");
 		//pthread_mutex_lock(&queueLocker);
-		int num_transactions = (num_tokens -2)/2;
+		int num_transactions = (num_tokens -1)/2;
 		if(queueOfOperations->num_op == 0){
 			printf("< ID %d\n", op_id);
 			operation* tempop;
 			tempop = malloc(sizeof(operation));
 			tempop->ID = op_id;
 			op_id++;
+
+			tempop->transactions = malloc(num_transactions*(sizeof(trans)));
+			int i;
+			int j = 1;
+			for (i=0; i<num_transactions; i++){
+				struct trans trans1;
+				trans1.acc_id = strtol(args[j], NULL, 0);
+				j++;
+				trans1.amount = strtol(args[j], NULL, 0);
+				j++;
+				tempop->transactions[i] = trans1;	
+			}
+
 			struct timeval time; 
 			gettimeofday(&time,NULL);
 			tempop->starttime = time;
@@ -170,7 +179,6 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			queueOfOperations->head = tempop;
 			queueOfOperations->end = tempop;
 			queueOfOperations->num_op++;
-			printf("num_trans: %d\n");
 		}
 		else{
 			printf("< ID %d\n", op_id);
@@ -178,6 +186,19 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			tempop = malloc(sizeof(operation));
 			tempop->ID = op_id;
 			op_id++;
+
+			tempop->transactions = malloc(num_transactions*(sizeof(trans)));
+			int i;
+			int j = 1;
+			for (i=0; i<num_transactions; i++){
+				struct trans trans1;
+				trans1.acc_id = strtol(args[j], NULL, 0);
+				j++;
+				trans1.amount = strtol(args[j], NULL, 0);
+				j++;
+				tempop->transactions[i] = trans1;	
+			}
+
 			struct timeval time;
 			gettimeofday(&time,NULL);
 			tempop->starttime = time;
