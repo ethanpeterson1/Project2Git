@@ -1,0 +1,2 @@
+appserver: appserver.c
+	gcc -o -lpthread appserver appserver.c
