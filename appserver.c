@@ -111,7 +111,7 @@ void* workerThread(){
 int argIdentification(char* args[]){ //arg identification and adds to queue
 	if((strcmp(args[0],"CHECK") == 0) && args[1] != NULL){
 		printf("CHECK Operation detected\n");
-		pthread_mutex_lock(&queueLocker);
+		//pthread_mutex_lock(&queueLocker);
 		if(queueOfOperations->num_op == 0){
 			operation* tempop;
 			tempop = malloc(sizeof(operation));
@@ -131,15 +131,15 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			tempop->ID = op_id;
 			op_id++;
 			struct timeval time;
-			gettimeofdat(&time,NULL);
+			gettimeofday(&time,NULL);
 			tempop->starttime = time;
 			tempop-> check_op = 1;
-			tempop -> trans_op = 0;
+			tempop-> num_trans = 0;
 			queueOfOperations->end->nextop = tempop;
 			queueOfOperations->end = tempop;
-			queueOfOperatiojns->num_op++;
+			queueOfOperations->num_op++;
 		}
-		pthread_mutex_unlock(&queueLocker);
+		//pthread_mutex_unlock(&queueLocker);
 	}
 }
 char* read_line(){ //reads inputted line from user
