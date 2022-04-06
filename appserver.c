@@ -79,6 +79,7 @@ void* mainThreadMethod(){
 		free(args);
 	}
 	free(prompt);
+	fclose(fileOut);
 }
 void* init_queue(){
 	queueOfOperations->head = NULL;
@@ -93,16 +94,16 @@ void* workerThread(){
 			currop = malloc(sizeof(operation));
 			currop = queueOfOperations->head;
 			if(currop-> check_op){
-				//flockfile(fileOut);
-				//fprintf(fileOut, "CHECK test");
-				//funlockfile(fileOut);
-				printf("Check Value of account = %d\n", read_account(currop->ID));
+				//printf("Check Value of account = %d\n", read_account(currop->ID));
 				//pthread_mutex_lock(&queueLocker);
 				struct timeval time;
 				gettimeofday(&time,NULL);
 				currop-> endtime = time;
 				queueOfOperations-> head = currop -> nextop;
 				queueOfOperations->num_op--;
+				flockfile(fileOut);
+				fprintf(fileOut,"%d BAL %d TIME", op_id, read_account(currop->ID),currop->starttime, currop->endtime );
+				funlockfile(fileOut);
 				//pthread_mutex_unlock(&queueLocker);
 			}
 		}
@@ -203,10 +204,10 @@ void init_app(char** argv, int argc){ //format should be appserver <# of worker 
 	// check if argc == 4
 	num_workers = strtol(argv[1], NULL, 0);
 	num_accounts = strtol(argv[2], NULL, 0);
-	/*filename = malloc(64* sizeof(char*));
-	strcmp(filename,argv[3]);
+	filename = malloc(64* sizeof(char*));
+	strcpy(filename,argv[3]);
 	fileOut = fopen(filename, "w");
-	printf("Filename: %s\n", filename);*/
+	printf("Filename: %s\n", filename);
 	if(initialize_accounts(num_accounts) == 1){
 		printf("Init Works!\n");
 	}
