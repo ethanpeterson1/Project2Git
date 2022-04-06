@@ -9,6 +9,7 @@
 #include "appserver.h"
 #include <sys/time.h>
 
+int num_tokens;
 char** get_args(char* line);
 char* read_line();
 void init_app(char** argv, int argc);
@@ -144,6 +145,14 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 		}
 		//pthread_mutex_unlock(&queueLocker);
 	}
+	if((strcmp(args[0],"TRANS") == 0) && (num_tokens-1 % 2) && num_tokens > 1){
+		printf("TRANS Operation detected\n");
+		//pthread_mutex_lock(&queueLocker);
+		//if(queueOfOperations->num_op == 0){
+			//int i;
+			//for (int i = 1; i<num_tokens-1 ; i++){
+	}
+				
 }
 char* read_line(){ //reads inputted line from user
 	size_t lineMaxSize = 64;
@@ -171,7 +180,7 @@ char* read_line(){ //reads inputted line from user
 char** get_args(char* line){
 	char *arg;
   	int buffSize = 64;
-  	int i = 0; //used for position in tokens 
+  	num_tokens = 0; //used for position in tokens 
 	char **args = malloc(buffSize * sizeof(char*));
 	arg = strtok(line,DELIMS);
 	if(!args){
@@ -179,15 +188,15 @@ char** get_args(char* line){
 		exit(EXIT_FAILURE);
   	}
   	while(arg != NULL){
-    		args[i] = arg;
-    		i++;
+    		args[num_tokens] = arg;
+    		num_tokens++;
     		arg = strtok(NULL,DELIMS);
       		if(!args){
 			printf("Memory could not be allocated");
 			exit(EXIT_FAILURE);
       		}
   	}
-  	args[i]= NULL;
+  	args[num_tokens]= NULL;
   	return args;
 }
 void init_app(char** argv, int argc){ //format should be appserver <# of worker threads> <# of accounts> <output file>
