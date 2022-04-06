@@ -99,13 +99,49 @@ void* workerThread(){
 				queueOfOperations-> head = currop -> nextop;
 				queueOfOperations->num_op--;
 				int value = read_account(currop->ID);
-				struct timeval time1;
-				gettimeofday(&time1,NULL);
-				currop-> endtime = time1;
+				struct timeval time;
+				gettimeofday(&time,NULL);
+				currop-> endtime = time;
 				flockfile(fileOut);
 				fprintf(fileOut,"%d BAL %d TIME %ld.%06.ld %ld.%06.ld ", currop->ID, value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec );
 				funlockfile(fileOut);
 				//pthread_mutex_unlock(&queueLocker);
+			}
+
+			else if(currop -> num_trans){
+				int isFundsPoss = 1;
+				queueOfOperations-> head = currop -> nextop;
+				queueOfOperations->num_op--;
+				int ISFaccount;
+				for(int i =0;i < num_trans; i++){
+					currID= transactions[i] -> acc_id;
+					currAmount = transactions[i]->amount;
+					accBalance = read_account(currID); 
+					if(currAmount > accBalance){
+						write_account(currID, accBalance+currAmount);
+					}
+					else(){
+						isFundsPoss = 0;
+						ISFaccount = currID;
+						break;
+					}
+				}
+				if(isFundsPoss){
+					struct timeval time;
+					gettimeofday(&time,NULL);
+					currop-> endtime = time;
+					flockfile(fileOut);
+					fprintf(fileOut,"%d OK TIME %ld.%06.ld %ld.%06.ld",currop->ID, value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec);
+					funlockfile(fileOut);
+				}
+				else{
+					struct timeval time;
+					gettimeofday(&time,NULL);
+					currop-> endtime = time;
+					flockfile(fileOut);
+					fprintf(fileOut,"%d ISF %d TIME %ld.%06.ld %ld.%06.ld",currop->ID,ISFaccount,value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec);
+					funlockfile(fileOut);
+				}
 			}
 		}
 	}
