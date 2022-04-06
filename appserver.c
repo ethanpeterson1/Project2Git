@@ -107,6 +107,11 @@ void* workerThread(){
 				funlockfile(fileOut);
 				//pthread_mutex_unlock(&queueLocker);
 			}
+			else if(currop -> num_trans){
+				queueOfOperations-> head = currop -> nextop;
+				queueOfOperations->num_op--;
+				for(int i =1;)
+			}
 		}
 	}
 }
