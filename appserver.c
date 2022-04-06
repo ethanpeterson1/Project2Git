@@ -96,13 +96,14 @@ void* workerThread(){
 			if(currop-> check_op){
 				//printf("Check Value of account = %d\n", read_account(currop->ID));
 				//pthread_mutex_lock(&queueLocker);
-				struct timeval time;
-				gettimeofday(&time,NULL);
-				currop-> endtime = time;
 				queueOfOperations-> head = currop -> nextop;
 				queueOfOperations->num_op--;
+				int value = read_account(currop->ID);
+				struct timeval time1;
+				gettimeofday(&time1,NULL);
+				currop-> endtime = time1;
 				flockfile(fileOut);
-				fprintf(fileOut,"%d BAL %d TIME", op_id, read_account(currop->ID),currop->starttime, currop->endtime );
+				fprintf(fileOut,"%d BAL %d TIME %ld.%06.ld %ld.%06.ld ", currop->ID, value,currop->starttime.tv_sec,currop->starttime.tv_usec, currop->endtime.tv_sec, currop->endtime.tv_usec );
 				funlockfile(fileOut);
 				//pthread_mutex_unlock(&queueLocker);
 			}
