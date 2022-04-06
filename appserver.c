@@ -150,11 +150,39 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 	if((strcmp(args[0],"TRANS") == 0) && (num_tokens-1 % 2) && num_tokens > 1){
 		printf("TRANS Operation detected\n");
 		//pthread_mutex_lock(&queueLocker);
-		//if(queueOfOperations->num_op == 0){
-			//int i;
-			//for (int i = 1; i<num_tokens-1 ; i++){
+		int num_transactions = (num_tokens -2)/2;
+		if(queueOfOperations->num_op == 0){
+			printf("< ID %d\n", op_id);
+			operation* tempop;
+			tempop = malloc(sizeof(operation));
+			tempop->ID = op_id;
+			op_id++;
+			struct timeval time; 
+			gettimeofday(&time,NULL);
+			tempop->starttime = time;
+			tempop-> check_op = 0;
+			tempop -> num_trans = num_transactions;
+			queueOfOperations->head = tempop;
+			queueOfOperations->end = tempop;
+			queueOfOperations->num_op++;
+			printf("num_trans: %d\n");
+		}
+		else{
+			printf("< ID %d\n", op_id);
+			operation* tempop;
+			tempop = malloc(sizeof(operation));
+			tempop->ID = op_id;
+			op_id++;
+			struct timeval time;
+			gettimeofday(&time,NULL);
+			tempop->starttime = time;
+			tempop-> check_op = 0;
+			tempop-> num_trans = num_transactions;
+			queueOfOperations->end->nextop = tempop;
+			queueOfOperations->end = tempop;
+			queueOfOperations->num_op++;
+		}
 	}
-				
 }
 char* read_line(){ //reads inputted line from user
 	size_t lineMaxSize = 64;
