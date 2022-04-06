@@ -117,7 +117,7 @@ int argIdentification(char* args[]){ //arg identification and adds to queue
 			gettimeofday(&time,NULL);
 			tempop->starttime = time;
 			tempop-> check_op = 1;
-			tempop -> trans_op = 0;
+			tempop -> num_trans = 0;
 			queueOfOperations->head = tempop;
 			queueOfOperations->num_op++;
 		}
